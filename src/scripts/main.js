@@ -8,6 +8,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const buttonStart =
     document.querySelector('.button\\.start') ||
     document.querySelector('.button.start');
+
+  const startMessage = document.querySelector('.message-start');
+  const winMessage = document.querySelector('.message-win');
   const loseMessage = document.querySelector('.message-lose');
 
   function updateScoreDisplay() {
@@ -17,24 +20,34 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function checkStatus() {
-    if (game.getStatus() === 'lose' || game.getStatus() === 'lost') {
-      if (loseMessage) {
-        loseMessage.classList.remove('hidden');
-        loseMessage.style.display = 'block';
-      }
-    } else {
-      if (loseMessage) {
-        loseMessage.classList.add('hidden');
-        loseMessage.style.display = 'none';
-      }
+    const currentStatus = game.getStatus();
+
+    if (startMessage) {
+      startMessage.classList.add('hidden');
+    }
+
+    if (winMessage) {
+      winMessage.classList.add('hidden');
+    }
+
+    if (loseMessage) {
+      loseMessage.classList.add('hidden');
+    }
+
+    if (currentStatus === 'idle' && startMessage) {
+      startMessage.classList.remove('hidden');
+    } else if (currentStatus === 'win' && winMessage) {
+      winMessage.classList.remove('hidden');
+    } else if (currentStatus === 'lose' && loseMessage) {
+      loseMessage.classList.remove('hidden');
     }
   }
 
   if (buttonStart) {
     buttonStart.addEventListener('click', () => {
       game.start();
-      game.restart();
       updateScoreDisplay();
+
       buttonStart.textContent = 'Restart';
       buttonStart.classList.remove('start');
       buttonStart.classList.add('restart');
@@ -46,6 +59,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.addEventListener('keydown', (e) => {
     if (!['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)) {
+      return;
+    }
+
+    if (game.getStatus() !== 'playing') {
       return;
     }
 
@@ -91,5 +108,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  checkStatus();
   renderGame();
 });

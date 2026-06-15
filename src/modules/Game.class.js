@@ -17,6 +17,10 @@ class Game {
   }
 
   moveLeft() {
+    if (this.status !== 'playing') {
+      return;
+    }
+
     const oldState = JSON.stringify(this.state);
 
     for (let row = 0; row < 4; row++) {
@@ -44,10 +48,16 @@ class Game {
     if (oldState !== JSON.stringify(this.state)) {
       this.addRandomTile();
     }
+
+    this.checkWin();
     this.checkGameOver();
   }
 
   moveRight() {
+    if (this.status !== 'playing') {
+      return;
+    }
+
     const oldState = JSON.stringify(this.state);
 
     for (let row = 0; row < 4; row++) {
@@ -65,7 +75,6 @@ class Game {
         }
       }
 
-      // Preenche com zeros à esquerda
       while (merged.length < 4) {
         merged.unshift(0);
       }
@@ -76,10 +85,16 @@ class Game {
     if (oldState !== JSON.stringify(this.state)) {
       this.addRandomTile();
     }
+
+    this.checkWin();
     this.checkGameOver();
   }
 
   moveUp() {
+    if (this.status !== 'playing') {
+      return;
+    }
+
     const oldState = JSON.stringify(this.state);
 
     for (let col = 0; col < 4; col++) {
@@ -101,10 +116,16 @@ class Game {
     if (oldState !== JSON.stringify(this.state)) {
       this.addRandomTile();
     }
+
+    this.checkWin();
     this.checkGameOver();
   }
 
   moveDown() {
+    if (this.status !== 'playing') {
+      return;
+    }
+
     const oldState = JSON.stringify(this.state);
 
     for (let col = 0; col < 4; col++) {
@@ -142,6 +163,8 @@ class Game {
     if (oldState !== JSON.stringify(this.state)) {
       this.addRandomTile();
     }
+
+    this.checkWin();
     this.checkGameOver();
   }
 
@@ -219,7 +242,29 @@ class Game {
     return merged;
   }
 
+  checkWin() {
+    if (this.status === 'win') {
+      return true;
+    }
+
+    for (let row = 0; row < 4; row++) {
+      for (let col = 0; col < 4; col++) {
+        if (this.state[row][col] === 2048) {
+          this.status = 'win';
+
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
+
   checkGameOver() {
+    if (this.checkWin()) {
+      return false;
+    }
+
     for (let row = 0; row < 4; row++) {
       for (let col = 0; col < 4; col++) {
         if (this.state[row][col] === 0) {
